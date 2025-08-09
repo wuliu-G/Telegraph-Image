@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,6 +11,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <script src="https://js.sentry-cdn.com/219f636ac7bde5edab2c3e16885cb535.min.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
   <div id="app">
     <el-container>
@@ -18,7 +20,8 @@
           <span class="title" @click="refreshDashboard">Dashboard</span>
           <div class="search-card"><el-input v-model="search" size="mini" placeholder="输入关键字搜索"></el-input></div>
           <el-tooltip content="批量上传" placement="bottom">
-            <span class="stats" @click="handleUpload"><i class="fas fa-upload upload-icon"></i><span class="stats-text">记录数: </span>{{ Number }}</span>
+            <span class="stats" @click="handleUpload"><i class="fas fa-upload upload-icon"></i><span
+                class="stats-text">记录数: </span>{{ Number }}</span>
           </el-tooltip>
           <input type="file" ref="fileInput" style="display: none;" multiple @change="uploadFiles">
           <div class="actions">
@@ -26,10 +29,18 @@
               <el-dropdown @command="switchFileType" :hide-on-click="false">
                 <span class="el-dropdown-link"><i :class="fileTypeIcon"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="image" :class="{ 'el-dropdown-menu__item--selected': fileType === 'image' }"><i :class="fileConfig.image.icon"></i> 图片</el-dropdown-item>
-                  <el-dropdown-item command="video" :class="{ 'el-dropdown-menu__item--selected': fileType === 'video' }"><i :class="fileConfig.video.icon"></i> 视频</el-dropdown-item>
-                  <el-dropdown-item command="audio" :class="{ 'el-dropdown-menu__item--selected': fileType === 'audio' }"><i :class="fileConfig.audio.icon"></i> 音频</el-dropdown-item>
-                  <el-dropdown-item command="document" :class="{ 'el-dropdown-menu__item--selected': fileType === 'document' }"><i :class="fileConfig.document.icon"></i> 文件</el-dropdown-item>
+                  <el-dropdown-item command="image"
+                    :class="{ 'el-dropdown-menu__item--selected': fileType === 'image' }"><i
+                      :class="fileConfig.image.icon"></i> 图片</el-dropdown-item>
+                  <el-dropdown-item command="video"
+                    :class="{ 'el-dropdown-menu__item--selected': fileType === 'video' }"><i
+                      :class="fileConfig.video.icon"></i> 视频</el-dropdown-item>
+                  <el-dropdown-item command="audio"
+                    :class="{ 'el-dropdown-menu__item--selected': fileType === 'audio' }"><i
+                      :class="fileConfig.audio.icon"></i> 音频</el-dropdown-item>
+                  <el-dropdown-item command="document"
+                    :class="{ 'el-dropdown-menu__item--selected': fileType === 'document' }"><i
+                      :class="fileConfig.document.icon"></i> 文件</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-tooltip>
@@ -37,9 +48,15 @@
               <el-dropdown @command="sort" :hide-on-click="false">
                 <span class="el-dropdown-link"><i :class="sortIcon"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="dateDesc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'dateDesc' }"><i class="fas fa-sort-amount-down"></i> 按时间倒序</el-dropdown-item>
-                  <el-dropdown-item command="nameAsc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'nameAsc' }"><i class="fas fa-sort-alpha-up"></i> 按名称升序</el-dropdown-item>
-                  <el-dropdown-item command="sizeDesc" :class="{ 'el-dropdown-menu__item--selected': sortOption === 'sizeDesc' }"><i class="fas fa-sort-amount-down"></i> 按大小倒序</el-dropdown-item>
+                  <el-dropdown-item command="dateDesc"
+                    :class="{ 'el-dropdown-menu__item--selected': sortOption === 'dateDesc' }"><i
+                      class="fas fa-sort-amount-down"></i> 按时间倒序</el-dropdown-item>
+                  <el-dropdown-item command="nameAsc"
+                    :class="{ 'el-dropdown-menu__item--selected': sortOption === 'nameAsc' }"><i
+                      class="fas fa-sort-alpha-up"></i> 按名称升序</el-dropdown-item>
+                  <el-dropdown-item command="sizeDesc"
+                    :class="{ 'el-dropdown-menu__item--selected': sortOption === 'sizeDesc' }"><i
+                      class="fas fa-sort-amount-down"></i> 按大小倒序</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-tooltip>
@@ -47,11 +64,21 @@
               <el-dropdown @command="filter" :hide-on-click="false">
                 <span class="el-dropdown-link"><i :class="filterIcon"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="all" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'all' }"><i class="fas fa-filter"></i> 全部</el-dropdown-item>
-                  <el-dropdown-item command="favorites" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'favorites' }"><i class="fas fa-bookmark"></i> 收藏</el-dropdown-item>
-                  <el-dropdown-item command="blocked" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'blocked' }"><i class="fas fa-lock"></i> 黑名单</el-dropdown-item>
-                  <el-dropdown-item command="unblocked" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'unblocked' }"><i class="fas fa-unlock"></i> 白名单</el-dropdown-item>
-                  <el-dropdown-item command="adult" :class="{ 'el-dropdown-menu__item--selected': filterOption === 'adult' }"><i class="fas fa-user-secret"></i> NSFW</el-dropdown-item>
+                  <el-dropdown-item command="all"
+                    :class="{ 'el-dropdown-menu__item--selected': filterOption === 'all' }"><i
+                      class="fas fa-filter"></i> 全部</el-dropdown-item>
+                  <el-dropdown-item command="favorites"
+                    :class="{ 'el-dropdown-menu__item--selected': filterOption === 'favorites' }"><i
+                      class="fas fa-bookmark"></i> 收藏</el-dropdown-item>
+                  <el-dropdown-item command="blocked"
+                    :class="{ 'el-dropdown-menu__item--selected': filterOption === 'blocked' }"><i
+                      class="fas fa-lock"></i> 黑名单</el-dropdown-item>
+                  <el-dropdown-item command="unblocked"
+                    :class="{ 'el-dropdown-menu__item--selected': filterOption === 'unblocked' }"><i
+                      class="fas fa-unlock"></i> 白名单</el-dropdown-item>
+                  <el-dropdown-item command="adult"
+                    :class="{ 'el-dropdown-menu__item--selected': filterOption === 'adult' }"><i
+                      class="fas fa-user-secret"></i> NSFW</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-tooltip>
@@ -59,11 +86,16 @@
               <el-dropdown @command="handleBatchOperation" :hide-on-click="false">
                 <span class="el-dropdown-link"><i class="fas fa-tasks"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="copy" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-link"></i> 批量复制</el-dropdown-item>
-                  <el-dropdown-item command="delete" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-trash-alt"></i> 批量删除</el-dropdown-item>
-                  <el-dropdown-item command="download" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-download"></i> 批量下载</el-dropdown-item>
-                  <el-dropdown-item command="block" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-lock"></i> 加入黑名单</el-dropdown-item>
-                  <el-dropdown-item command="unblock" :class="{ disabled: selectedFiles.length === 0 }"><i class="fas fa-unlock"></i> 加入白名单</el-dropdown-item>
+                  <el-dropdown-item command="copy" :class="{ disabled: selectedFiles.length === 0 }"><i
+                      class="fas fa-link"></i> 批量复制</el-dropdown-item>
+                  <el-dropdown-item command="delete" :class="{ disabled: selectedFiles.length === 0 }"><i
+                      class="fas fa-trash-alt"></i> 批量删除</el-dropdown-item>
+                  <el-dropdown-item command="download" :class="{ disabled: selectedFiles.length === 0 }"><i
+                      class="fas fa-download"></i> 批量下载</el-dropdown-item>
+                  <el-dropdown-item command="block" :class="{ disabled: selectedFiles.length === 0 }"><i
+                      class="fas fa-lock"></i> 加入黑名单</el-dropdown-item>
+                  <el-dropdown-item command="unblock" :class="{ disabled: selectedFiles.length === 0 }"><i
+                      class="fas fa-unlock"></i> 加入白名单</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-tooltip>
@@ -83,7 +115,8 @@
               <el-dropdown @command="handleToolkit" :hide-on-click="false">
                 <span class="el-dropdown-link"><i class="fas fa-toolbox"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="selectAllInPage"><i class="fas fa-check-square"></i> 全选当前页</el-dropdown-item>
+                  <el-dropdown-item command="selectAllInPage"><i class="fas fa-check-square"></i>
+                    全选当前页</el-dropdown-item>
                   <el-dropdown-item command="checkBrokenFiles"><i class="fas fa-wrench"></i> 检测失效文件</el-dropdown-item>
                   <el-dropdown-item command="editWebsites"><i class="fas fa-edit"></i> 编辑快捷方式</el-dropdown-item>
                 </el-dropdown-menu>
@@ -100,59 +133,62 @@
             <template v-if="fileType === 'image'">
               <el-card class="image-card">
                 <span class="collect-icon" @click.stop="toggleLike(index, item.name)">
-                <i :class="item.metadata.liked ? 'fa-solid fa-bookmark liked' : 'fa-regular fa-bookmark not-liked'"></i>
+                  <i
+                    :class="item.metadata.liked ? 'fa-solid fa-bookmark liked' : 'fa-regular fa-bookmark not-liked'"></i>
                 </span>
                 <el-checkbox v-model="item.selected" :ref="'checkbox-' + index"></el-checkbox>
-                <el-image :src="'/file/' + item.name" :preview-src-list="['/file/' + item.name]" fit="cover" lazy="true"></el-image>
+                <el-image :src="'/file/' + item.name" :preview-src-list="['/file/' + item.name]" fit="cover"
+                  lazy="true"></el-image>
                 <div class="image-overlay">
                   <div class="overlay-buttons">
                     <el-button size="mini" type="info" @click.stop="handleEditName(item)">编辑</el-button>
                     <el-button size="mini" type="primary" @click.stop="handleCopy(index, item.name)">复制</el-button>
                     <el-button size="mini" type="danger" @click.stop="handleDelete(index, item.name)">删除</el-button>
                   </div>
-              </div>
-              <div class="card-footer">
-                <el-popover
-                  trigger="click"
-                  placement="top"
-                  popper-class="custom-popover">
-                  <template #default>
-                    <p v-html="formattedFileDetails(item)"></p>
-                  </template>
-                  <template #reference>
-                    <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">
-                      {{ item.metadata.fileName || item.name }}
-                    </span>
-                  </template>
-                </el-popover>
-              </div>
+                </div>
+                <div class="card-footer">
+                  <el-popover trigger="click" placement="top" popper-class="custom-popover">
+                    <template #default>
+                      <p v-html="formattedFileDetails(item)"></p>
+                    </template>
+                    <template #reference>
+                      <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">
+                        {{ item.metadata.fileName || item.name }}
+                      </span>
+                    </template>
+                  </el-popover>
+                </div>
               </el-card>
             </template>
             <!-- 视频 -->
             <template v-else-if="fileType === 'video'">
               <el-card class="video-card" :class="{ 'selected': item.selected }">
                 <div class="video-content">
-                  <video :src="'/file/' + item.name" controls style="width: 100%; height: 100%; object-fit: cover;"></video>
+                  <video :src="'/file/' + item.name" controls
+                    style="width: 100%; height: 100%; object-fit: cover;"></video>
                   <div class="video-title">
-                    <el-popover
-                      trigger="click"
-                      placement="top"
-                      popper-class="custom-popover">
+                    <el-popover trigger="click" placement="top" popper-class="custom-popover">
                       <template #default>
                         <p v-html="formattedFileDetails(item)"></p>
                       </template>
                       <template #reference>
-                        <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">{{ item.metadata.fileName || item.name }}</span>
+                        <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">{{
+                          item.metadata.fileName || item.name }}</span>
                       </template>
                     </el-popover>
                   </div>
-                    <!-- 控制按钮区域 -->
+                  <!-- 控制按钮区域 -->
                   <div class="video-controls">
-                    <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
-                    <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i class="fas fa-edit"></i></button>
-                    <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
-                    <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i class="fas fa-link"></i></button>
-                    <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i class="fas fa-trash-alt"></i></button>
+                    <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i
+                        :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
+                    <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i
+                        class="fas fa-edit"></i></button>
+                    <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i
+                        :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
+                    <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i
+                        class="fas fa-link"></i></button>
+                    <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i
+                        class="fas fa-trash-alt"></i></button>
                   </div>
                 </div>
               </el-card>
@@ -168,35 +204,34 @@
                     </div>
                     <div class="audio-info">
                       <div class="audio-title">
-                        <el-popover
-                          trigger="click"
-                          placement="top"
-                          popper-class="custom-popover">
+                        <el-popover trigger="click" placement="top" popper-class="custom-popover">
                           <template #default>
                             <p v-html="formattedFileDetails(item)"></p>
                           </template>
                           <template #reference>
-                            <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">{{ item.metadata.fileName || item.name }}</span>
+                            <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">{{
+                              item.metadata.fileName || item.name }}</span>
                           </template>
                         </el-popover>
                       </div>
                       <div class="audio-subtitle">{{ getFileType(item.name) }}</div>
                     </div>
                   </div>
-                  <audio
-                    class="custom-audio-player"
-                    :src="'/file/' + item.name"
-                    controls
-                    preload="metadata">
+                  <audio class="custom-audio-player" :src="'/file/' + item.name" controls preload="metadata">
                     当前浏览器不支持音频播放
                   </audio>
                   <!-- 控制按钮区域 -->
                   <div class="audio-controls">
-                    <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
-                    <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i class="fas fa-edit"></i></button>
-                    <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
-                    <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i class="fas fa-copy"></i></button>
-                    <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i class="fas fa-trash-alt"></i></button>
+                    <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i
+                        :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
+                    <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i
+                        class="fas fa-edit"></i></button>
+                    <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i
+                        :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
+                    <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i
+                        class="fas fa-copy"></i></button>
+                    <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i
+                        class="fas fa-trash-alt"></i></button>
                   </div>
                 </div>
               </el-card>
@@ -212,15 +247,13 @@
                     </div>
                     <div class="file-info">
                       <div class="file-title">
-                        <el-popover
-                          trigger="click"
-                          placement="top"
-                          popper-class="custom-popover">
+                        <el-popover trigger="click" placement="top" popper-class="custom-popover">
                           <template #default>
                             <p v-html="formattedFileDetails(item)"></p>
                           </template>
                           <template #reference>
-                            <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">{{ item.metadata.fileName || item.name }}</span>
+                            <span :style="{ color: item.metadata.ListType !== 'Block' ? '#fff' : '#aaa' }">{{
+                              item.metadata.fileName || item.name }}</span>
                           </template>
                         </el-popover>
                       </div>
@@ -229,11 +262,16 @@
                   </div>
                   <!-- 控制按钮区域 -->
                   <div class="file-controls">
-                    <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
-                    <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i class="fas fa-edit"></i></button>
-                    <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
-                    <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i class="fas fa-copy"></i></button>
-                    <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i class="fas fa-trash-alt"></i></button>
+                    <button class="control-btn like-btn" @click.stop="toggleLike(index, item.name)"><i
+                        :class="item.metadata.liked ? 'fas fa-heart liked' : 'far fa-heart'"></i></button>
+                    <button class="control-btn edit-btn" @click.stop="handleEditName(item)"><i
+                        class="fas fa-edit"></i></button>
+                    <button class="control-btn select-btn" @click.stop="toggleSelect(index, item.name)"><i
+                        :class="item.selected ? 'fas fa-square-check selected' : 'far fa-square'"></i></button>
+                    <button class="control-btn" @click.stop="handleCopy(index, item.name)"><i
+                        class="fas fa-copy"></i></button>
+                    <button class="control-btn" @click.stop="handleDelete(index, item.name)"><i
+                        class="fas fa-trash-alt"></i></button>
                   </div>
                 </div>
               </el-card>
@@ -241,9 +279,7 @@
           </template>
         </div>
         <div class="pagination-container">
-          <el-pagination
-            background layout="prev, pager, next"
-            :total="filteredTableData.length" :page-size="pageSize"
+          <el-pagination background layout="prev, pager, next" :total="filteredTableData.length" :page-size="pageSize"
             @current-change="handlePageChange" :current-page.sync="currentPage" />
         </div>
         <el-footer class="footer">
@@ -333,10 +369,10 @@
           // 文件类型匹配
           const ext = data.name.split('.').pop().toLowerCase();
           const matchesType = this.fileType === 'document' ?
-          !Object.keys(this.fileConfig).some(type =>
-            type !== 'document' && this.fileConfig[type].exts.includes(ext) // 匹配其他所有文件
-          ) :
-          this.fileConfig[this.fileType].exts.includes(ext);
+            !Object.keys(this.fileConfig).some(type =>
+              type !== 'document' && this.fileConfig[type].exts.includes(ext) // 匹配其他所有文件
+            ) :
+            this.fileConfig[this.fileType].exts.includes(ext);
           return matchesSearch && matchesFilter && matchesType;
         });
       },
@@ -347,16 +383,16 @@
       sortIcon() { return `fas fa-sort-${this.sortOption === 'dateDesc' ? 'amount-down' : 'alpha-up'}`; },
       filterIcon() {
         return this.filterOption === 'all' ? 'fas fa-filter' :
-        this.filterOption === 'favorites' ? 'fas fa-bookmark' :
-        this.filterOption === 'blocked' ? 'fas fa-lock' :
-        this.filterOption === 'unblocked' ? 'fas fa-unlock' :
-        this.filterOption === 'adult' ? 'fas fa-user-secret' : '';
+          this.filterOption === 'favorites' ? 'fas fa-bookmark' :
+            this.filterOption === 'blocked' ? 'fas fa-lock' :
+              this.filterOption === 'unblocked' ? 'fas fa-unlock' :
+                this.filterOption === 'adult' ? 'fas fa-user-secret' : '';
       },
       fileTypeIcon() {
         return this.fileType === 'image' ? 'fas fa-image' :
-        this.fileType === 'video' ? 'fas fa-video' :
-        this.fileType === 'audio' ? 'fas fa-music' :
-        this.fileType === 'document' ? 'fas fa-folder-open' : '';
+          this.fileType === 'video' ? 'fas fa-video' :
+            this.fileType === 'audio' ? 'fas fa-music' :
+              this.fileType === 'document' ? 'fas fa-folder-open' : '';
       }
     },
     watch: {  // 监听数据变化
@@ -370,7 +406,7 @@
       filterOption(newOption) { localStorage.setItem('filterOption', newOption); }
     },
     methods: {
-      refreshDashboard() {location.reload();},  // 刷新页面
+      refreshDashboard() { location.reload(); },  // 刷新页面
       handleLogout() { window.location.href = '/'; },  // 退出登录
       handlePageChange(page) { this.currentPage = page; },  // 切换页面
       handleUpload() { this.$refs.fileInput.click(); },  // 打开文件选择对话框
@@ -379,7 +415,7 @@
       sortData(data) {
         return this.sortOption === 'nameAsc' ? data.sort((a, b) => a.name.localeCompare(b.name)) :
           this.sortOption === 'sizeDesc' ? data.sort((a, b) => b.metadata.fileSize - a.metadata.fileSize) :
-          data.sort((a, b) => b.metadata.TimeStamp - a.metadata.TimeStamp);
+            data.sort((a, b) => b.metadata.TimeStamp - a.metadata.TimeStamp);
       },
       formattedFileDetails(item) {
         const metadata = item.metadata;
@@ -397,7 +433,7 @@
         const config = {
           minSize: 15, // 最小页面卡片数
           cardWidth: 240,
-          ratio: 3/4, // 卡片高宽比
+          ratio: 3 / 4, // 卡片高宽比
           gap: 20, // 卡片间距
           defaultWidth: 800,
           defaultHeaderHeight: 60 // 默认Dashboard高度
@@ -420,7 +456,7 @@
       },
       updateStats() {
         this.Number = this.tableData.length;
-        let fileCount = {image: 0, video: 0, audio: 0, document: 0};
+        let fileCount = { image: 0, video: 0, audio: 0, document: 0 };
         this.tableData.forEach(file => {
           const ext = file.name.split('.').pop().toLowerCase();
           const type = Object.keys(this.fileConfig).find(t =>
@@ -446,8 +482,8 @@
           (file.size <= config.maxSize ? valid : invalid).push(file);
         });
         // 显示错误信息
-        if(invalid.length) { this.$message.error(`文件超过${config.maxSize/1024/1024}MB: \n${invalid.map(f => f.name).join('\n')}`); }
-        if(!valid.length) { this.$message.info('没有符合条件的文件'); event.target.value = ''; return; }
+        if (invalid.length) { this.$message.error(`文件超过${config.maxSize / 1024 / 1024}MB: \n${invalid.map(f => f.name).join('\n')}`); }
+        if (!valid.length) { this.$message.info('没有符合条件的文件'); event.target.value = ''; return; }
 
         try {
           await this.$confirm(`确定要上传这 ${valid.length} 个文件吗?`, '提示', {
@@ -530,14 +566,14 @@
           .then(result => {
             if (!result.success) {  // 如果服务器更新失败，将状态还原
               this.tableData[fileIndex].metadata.liked = !this.tableData[fileIndex].metadata.liked;
-              this.$message({message: '更新收藏状态失败，请稍后重试', type: 'error'});
+              this.$message({ message: '更新收藏状态失败，请稍后重试', type: 'error' });
             } else {
               this.$message.success(this.tableData[fileIndex].metadata.liked ? '收藏成功' : '取消收藏');
             }
           })
           .catch(error => { // 如果服务器响应错误，将状态还原
             this.tableData[fileIndex].metadata.liked = !this.tableData[fileIndex].metadata.liked;
-            this.$message({message: '同步服务器失败，请检查网络连接', type: 'error'});
+            this.$message({ message: '同步服务器失败，请检查网络连接', type: 'error' });
           });
       },
       handleDelete(index, key) {
@@ -674,7 +710,7 @@
         });
       },
       checkBrokenFiles() {  // 检测失效文件
-        const loadingMessage = this.$message({ message: '正在检测失效文件...', duration: 0});
+        const loadingMessage = this.$message({ message: '正在检测失效文件...', duration: 0 });
 
         let brokenCount = 0;
         const promises = this.tableData.map((item, index) => {
@@ -746,7 +782,7 @@
               if (!line.trim()) continue;
               const [name, url, icon = 'fas fa-link'] = line.split('|');
               if (!name || !url) return '名称和网址不能为空：' + line;
-              if (!(/^https?:\/\/.+/.test(url) || /^\.\/.*/.test(url))) return '网址格式错误：'+line;
+              if (!(/^https?:\/\/.+/.test(url) || /^\.\/.*/.test(url))) return '网址格式错误：' + line;
               if (!/^(fas?|fa-brands|fa-regular|fa-solid)\s+fa-[a-z0-9-]+$/.test(icon)) {
                 return '图标类名格式错误：' + line;
               }
@@ -763,7 +799,7 @@
           this.quickWebsites = newSites;
           localStorage.setItem('quickWebsites', JSON.stringify(newSites));
           this.$message.success('保存成功');
-        }).catch(() => {});
+        }).catch(() => { });
       },
       getFileIcon(filename) {
         const ext = filename.split('.').pop().toLowerCase();
@@ -782,8 +818,8 @@
           'psd,ai,eps,cdr': 'fas fa-file-image',
           'exe,msi,app,dmg,deb,rpm': 'fas fa-file-arrow-down'
         };
-        for(const [exts, icon] of Object.entries(iconMap)) {
-          if(exts.split(',').includes(ext)) {
+        for (const [exts, icon] of Object.entries(iconMap)) {
+          if (exts.split(',').includes(ext)) {
             return icon;
           }
         }
@@ -808,17 +844,33 @@
             method: 'GET',
             credentials: 'include'
           })
-          .then(response => response.json())
-          .then(result => {
-            if (result.success) {
-              item.metadata.fileName = value;
-              this.$message.success('文件名修改成功');
-            } else {
-              this.$message.error('文件名修改失败');
-            }
-          })
-          .catch(() => this.$message.error('修改文件名时出错，请检查网络连接'));
-        }).catch(() => {});
+            .then(response => response.json())
+            .then(result => {
+              if (result.success) {
+                // 确保metadata对象存在
+                if (!item.metadata) {
+                  item.metadata = {
+                    TimeStamp: Date.now(),
+                    ListType: "None",
+                    Label: "None",
+                    liked: false,
+                    fileSize: 0
+                  };
+                }
+                // 更新本地显示的文件名
+                item.metadata.fileName = value;
+                // 强制Vue重新渲染
+                this.$forceUpdate();
+                this.$message.success('文件名修改成功');
+              } else {
+                this.$message.error(`文件名修改失败: ${result.error || '未知错误'}`);
+              }
+            })
+            .catch(error => {
+              console.error('重命名请求失败:', error);
+              this.$message.error('修改文件名时出错，请检查网络连接');
+            });
+        }).catch(() => { });
       }
     },
     mounted() {
@@ -862,4 +914,5 @@
     }
   });
 </script>
+
 </html>
