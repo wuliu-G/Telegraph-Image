@@ -1,4 +1,4 @@
-# Copyright(c) 2025 左岚.All rights reserved.
+// Copyright (c) 2025 左岚. All rights reserved.
 export async function onRequest(context) {
     const { request, params, env } = context;
 
@@ -7,7 +7,7 @@ export async function onRequest(context) {
     // 获取新文件名参数
     const url = new URL(request.url);
     const newName = url.searchParams.get('newName');
-    
+
     if (!newName) {
         return new Response(JSON.stringify({ success: false, error: 'Missing newName parameter' }), {
             status: 400,
@@ -31,7 +31,7 @@ export async function onRequest(context) {
         };
         await env.img_url.put(params.id, "", { metadata: defaultMetadata });
         console.log("Created new metadata:", defaultMetadata);
-        
+
         return new Response(JSON.stringify({ success: true, fileName: newName }), {
             headers: { 'Content-Type': 'application/json' },
         });
