@@ -111,6 +111,17 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-tooltip>
+            <el-tooltip content="文件夹管理" placement="bottom">
+              <el-dropdown @command="handleFolderOperation" :hide-on-click="false">
+                <span class="el-dropdown-link"><i class="fas fa-folder"></i></span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="createFolder"><i class="fas fa-folder-plus"></i> 新建文件夹</el-dropdown-item>
+                  <el-dropdown-item command="moveToFolder" :class="{ disabled: selectedFiles.length === 0 }"><i
+                      class="fas fa-folder-open"></i> 移动到文件夹</el-dropdown-item>
+                  <el-dropdown-item command="showFolders"><i class="fas fa-list"></i> 文件夹视图</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-tooltip>
             <el-tooltip content="工具箱" placement="bottom">
               <el-dropdown @command="handleToolkit" :hide-on-click="false">
                 <span class="el-dropdown-link"><i class="fas fa-toolbox"></i></span>
@@ -127,6 +138,33 @@
         </div>
       </el-header>
       <el-main class="main-container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb-container" v-if="currentFolder">
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item @click.native="navigateToFolder('')" style="cursor: pointer;">
+              <i class="fas fa-home"></i> 根目录
+            </el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(folder, index) in breadcrumbPath" :key="index"
+              @click.native="navigateToFolder(getBreadcrumbPath(index))" style="cursor: pointer;">
+              {{ folder }}
+            </el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
+
+        <!-- 文件夹视图 -->
+        <div class="folder-view" v-if="showFolderView">
+          <div class="folder-grid">
+            <div class="folder-item" v-for="folder in currentFolders" :key="folder.id"
+              @click="navigateToFolder(folder.path)" @contextmenu.prevent="showFolderContextMenu($event, folder)">
+              <div class="folder-icon">
+                <i class="fas fa-folder" style="font-size: 48px; color: #409EFF;"></i>
+              </div>
+              <div class="folder-name">{{ folder.name }}</div>
+              <div class="folder-info">{{ folder.fileCount }} 个文件</div>
+            </div>
+          </div>
+        </div>
+
         <div class="content">
           <template v-for="(item, index) in paginatedTableData" :key="index">
             <!-- 图片 -->
@@ -142,6 +180,7 @@
                 <div class="image-overlay">
                   <div class="overlay-buttons">
                     <el-button size="mini" type="info" @click.stop="handleEditName(item)">编辑</el-button>
+                    <el-button size="mini" type="success" @click.stop="handleMoveToFolder(item)">移动</el-button>
                     <el-button size="mini" type="primary" @click.stop="handleCopy(index, item.name)">复制</el-button>
                     <el-button size="mini" type="danger" @click.stop="handleDelete(index, item.name)">删除</el-button>
                   </div>
@@ -157,6 +196,10 @@
                       </span>
                     </template>
                   </el-popover>
+                  <div class="folder-path" v-if="item.metadata.folderPath"
+                    style="font-size: 12px; color: #999; margin-top: 4px;">
+                    <i class="fas fa-folder"></i> {{ item.metadata.folderPath }}
+                  </div>
                 </div>
               </el-card>
             </template>
@@ -346,6 +389,10 @@
         { name: 'YouCompress', url: 'https://www.youcompress.com/zh-cn/', icon: 'fas fa-file-zipper' },
         { name: 'Cloudinary', url: 'https://console.cloudinary.com/', icon: 'fas fa-cloud' },
       ],
+      // 文件夹管理相关
+      folders: [], // 所有文件夹列表
+      currentFolder: '', // 当前文件夹路径
+      showFolderView: false, // 是否显示文件夹视图
     },
     computed: {
       filteredTableData() {
@@ -373,8 +420,28 @@
               type !== 'document' && this.fileConfig[type].exts.includes(ext) // 匹配其他所有文件
             ) :
             this.fileConfig[this.fileType].exts.includes(ext);
-          return matchesSearch && matchesFilter && matchesType;
+
+          // 文件夹过滤 - 只显示当前文件夹的文件
+          const matchesFolder = (data.metadata.folderPath || '') === this.currentFolder;
+
+          return matchesSearch && matchesFilter && matchesType && matchesFolder;
         });
+      },
+      // 当前文件夹下的子文件夹
+      currentFolders() {
+        return this.folders.filter(folder => {
+          if (this.currentFolder === '') {
+            // 根目录：显示没有父文件夹的文件夹
+            return folder.parentFolder === '';
+          } else {
+            // 子目录：显示父文件夹为当前文件夹的文件夹
+            return folder.parentFolder === this.currentFolder;
+          }
+        });
+      },
+      // 面包屑路径
+      breadcrumbPath() {
+        return this.currentFolder ? this.currentFolder.split('/') : [];
       },
       paginatedTableData() {
         return this.sortData(this.filteredTableData)
@@ -871,6 +938,157 @@
               this.$message.error('修改文件名时出错，请检查网络连接');
             });
         }).catch(() => { });
+      },
+      // 文件夹管理方法
+      async loadFolders() { // 加载文件夹列表
+        try {
+          const response = await fetch('./api/manage/getFolders', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          const folders = await response.json();
+          this.folders = folders;
+          console.log('Loaded folders:', folders);
+        } catch (error) {
+          console.error('Load folders error:', error);
+          this.$message.error('加载文件夹列表失败');
+        }
+      },
+      handleFolderOperation(command) { // 文件夹操作处理
+        switch (command) {
+          case 'createFolder': this.createFolder(); break;
+          case 'moveToFolder': this.moveSelectedToFolder(); break;
+          case 'showFolders': this.toggleFolderView(); break;
+        }
+      },
+      createFolder() { // 创建文件夹
+        this.$prompt('', '新建文件夹', {
+          inputValue: '',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputValidator: (value) => {
+            if (!value) return '文件夹名称不能为空';
+            if (value.length > 50) return '文件夹名称不能超过50个字符';
+            if (!/^[^<>:"/\\|?*]+$/.test(value)) return '文件夹名称包含非法字符';
+            return true;
+          }
+        }).then(async ({ value }) => {
+          try {
+            const response = await fetch(`./api/manage/createFolder?folderName=${encodeURIComponent(value)}&parentFolder=${encodeURIComponent(this.currentFolder)}`, {
+              method: 'GET',
+              credentials: 'include'
+            });
+            const result = await response.json();
+            if (result.success) {
+              this.$message.success('文件夹创建成功');
+              await this.loadFolders();
+            } else {
+              this.$message.error(`创建失败: ${result.error}`);
+            }
+          } catch (error) {
+            console.error('Create folder error:', error);
+            this.$message.error('创建文件夹时出错');
+          }
+        }).catch(() => { });
+      },
+      navigateToFolder(folderPath) { // 导航到文件夹
+        this.currentFolder = folderPath;
+        this.currentPage = 1;
+        this.showFolderView = false;
+        console.log('Navigate to folder:', folderPath);
+      },
+      getBreadcrumbPath(index) { // 获取面包屑路径
+        return this.breadcrumbPath.slice(0, index + 1).join('/');
+      },
+      toggleFolderView() { // 切换文件夹视图
+        this.showFolderView = !this.showFolderView;
+        if (this.showFolderView) {
+          this.loadFolders();
+        }
+      },
+      handleMoveToFolder(item) { // 移动单个文件到文件夹
+        this.showMoveToFolderDialog([item]);
+      },
+      moveSelectedToFolder() { // 移动选中文件到文件夹
+        if (this.selectedFiles.length === 0) {
+          this.$message.warning('请先选择文件');
+          return;
+        }
+        this.showMoveToFolderDialog(this.selectedFiles);
+      },
+      async showMoveToFolderDialog(files) { // 显示移动文件对话框
+        await this.loadFolders();
+
+        const folderOptions = [
+          { label: '根目录', value: '' },
+          ...this.folders.map(folder => ({
+            label: folder.path,
+            value: folder.path
+          }))
+        ];
+
+        // 创建选择文件夹的HTML
+        const folderSelectHtml = `
+          <div style="margin-top: 10px;">
+            <select id="folderSelect" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              ${folderOptions.map(option =>
+          `<option value="${option.value}" ${option.value === this.currentFolder ? 'selected' : ''}>${option.label}</option>`
+        ).join('')}
+            </select>
+          </div>
+        `;
+
+        this.$confirm(folderSelectHtml, '选择目标文件夹', {
+          confirmButtonText: '移动',
+          cancelButtonText: '取消',
+          dangerouslyUseHTMLString: true,
+          customClass: 'move-folder-dialog'
+        }).then(async () => {
+          const value = document.getElementById('folderSelect').value;
+          try {
+            const loading = this.$message({ message: `正在移动 ${files.length} 个文件...`, duration: 0 });
+            let successCount = 0;
+
+            for (const file of files) {
+              try {
+                const response = await fetch(`./api/manage/moveToFolder/${file.name}?targetFolder=${encodeURIComponent(value)}`, {
+                  method: 'GET',
+                  credentials: 'include'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                  // 更新本地文件数据
+                  const fileIndex = this.tableData.findIndex(item => item.name === file.name);
+                  if (fileIndex !== -1) {
+                    this.tableData[fileIndex].metadata.folderPath = value;
+                    this.tableData[fileIndex].selected = false;
+                  }
+                  successCount++;
+                }
+              } catch (error) {
+                console.error(`Move file ${file.name} error:`, error);
+              }
+            }
+
+            loading.close();
+
+            if (successCount === files.length) {
+              this.$message.success(`成功移动 ${successCount} 个文件`);
+            } else if (successCount > 0) {
+              this.$message.warning(`移动了 ${successCount}/${files.length} 个文件`);
+            } else {
+              this.$message.error('移动文件失败');
+            }
+
+            // 刷新文件夹信息
+            await this.loadFolders();
+
+          } catch (error) {
+            console.error('Move files error:', error);
+            this.$message.error('移动文件时出错');
+          }
+        }).catch(() => { });
       }
     },
     mounted() {
@@ -908,6 +1126,9 @@
       if (localStorage.getItem('quickWebsites')) {
         this.quickWebsites = JSON.parse(localStorage.getItem('quickWebsites'));
       }
+
+      // 加载文件夹数据
+      this.loadFolders();
     },
     beforeDestroy() {
       window.removeEventListener('resize', this.calculatePageSize);
